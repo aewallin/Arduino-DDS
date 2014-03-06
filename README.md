@@ -14,7 +14,8 @@ Hardware
 
 Software
 --------
-*ddscontrol/ has the Arduino Due code. 
+
+* ddscontrol/ has the Arduino Due code. 
   * ddscontrol.ino   Main program 
   * ad9912.h         AD9912 DDS registers and register-values
   * ddslib.h         AD9912 specific funtions
