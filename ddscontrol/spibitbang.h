@@ -6,9 +6,14 @@
 class SPIBitBang {
   /*  
     experimental bit-banged SPI
-    try to follow SPI api http://arduino.cc/en/Reference/SPI
-    * 
-    * read/write bytes over SPI.
+    AW 2014
+    
+    native SPI api is at http://arduino.cc/en/Reference/SPI
+ 
+    pinSDIO is a combined MOSI/MISO data pin
+    pinCSB  is the chip select pin
+    pinSCLK is the serial clock pin
+
   */
 public:
     SPIBitBang( int8_t pinSDIO, int8_t pinCSB, int8_t pinSCLK) : SDIO (pinSDIO), CSB(pinCSB), SCLK (pinSCLK) {
@@ -69,8 +74,10 @@ public:
           digitalWrite( CSB, HIGH);
           return word(msb,lsb);
     };*/
+ 
     // write two bytes
     // then read one byte
+    // the two-byte write is called "instruction", because it tells the AD9912 what to do
     void write16read16(int instruction, int &data) {
           digitalWrite( SCLK, LOW); // ensure clock pin LOW when we start
           digitalWrite( CSB, LOW);
@@ -98,7 +105,8 @@ public:
           pinMode(SDIO, OUTPUT);  
           data = msb;   
     };
-    
+    // used for reading the 6-byte FTW of the AD9912 DDS
+    // writes results to *data, supplied by the user, which must have space for the 6 bytes.
     void write16read48(int instruction, int8_t* data) {
           digitalWrite( SCLK, LOW); // ensure clock pin LOW when we start
           digitalWrite( CSB, LOW);
@@ -116,6 +124,9 @@ public:
           digitalWrite( CSB, HIGH);
           pinMode(SDIO, OUTPUT);  
     };
+    // this is used for setting the FTW (frequency tuning word) on the AD9912 DDS
+    // the FTW is 48 bits, or 6 bytes. We assume the *data pointer contains these bytes
+    // there is no error checking, so bad things will happen if *data is not the right type
     void write16write48(int instruction, int8_t* data) {
           digitalWrite( SCLK, LOW); // ensure clock pin LOW when we start
           digitalWrite( CSB, LOW);
